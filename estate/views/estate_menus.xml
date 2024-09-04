@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Menu Definitions using Nested Menu Structure -->
+    <menuitem id="menu_estate_management" name="Real Estate">
+        <!-- Level 2: Submenu for Property Management -->
+        <menuitem id="menu_estate_property_root" name="Properties">
+            <!-- Level 3: Submenu Item Linking to the Action -->
+            <menuitem id="menu_estate_property" name="Estate Properties" action="test_model_action"/>
+            <menuitem id="menu_estate_property_type" name="Estate Property Types" action="test_model_type_action"/>
+        </menuitem>
+        <menuitem id="menu_users_root" name="Users">
+            <!-- Level 3: Submenu Item Linking to the Action -->
+            <menuitem id="menu_users_salesperson" name="Salesperson" action="salesperson_action"/>
+            <menuitem id="menu_users_buyer" name="Buyer" action="buyer_action"/>
+        </menuitem>
+        <menuitem id="menu_settings_root" name="Settings">
+            <!-- Level 3: Submenu Item Linking to the Action -->
+            <menuitem id="menu_settings_tags" name="Tags" action="tags_action"/>
+        </menuitem>
+    </menuitem>
+
+</odoo>

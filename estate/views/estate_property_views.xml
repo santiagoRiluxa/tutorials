@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo><data>
+
+    <!-- Custom Form View Definition -->
+    <record id="view_estate_property_form" model="ir.ui.view">
+        <field name="name">estate.property.form</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <form string="Estate Property">
+                <header>
+                    <!-- Botones de acción -->
+                    <button name="action_set_sold" type="object" string="Sold" 
+                            class="btn-primary" 
+                            attrs="{'invisible': [('state', 'in', ['sold', 'canceled'])]}"/>
+                    <button name="action_set_canceled" type="object" string="Cancel" 
+                            class="btn-secondary" 
+                            attrs="{'invisible': [('state', 'in', ['sold', 'canceled'])]}"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,offer_received,offer_accepted,sold,canceled"/>
+                </header>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            <field name="name"/>
+                            <field name="postcode"/>
+                            <field name="date_availability" optional="hide"/>
+                        </group>
+                        <group>
+                            <field name="expected_price"/>
+                            <field name="selling_price"/>
+                            <field name="best_price"/>
+                            <field name="state"/>   
+                        </group>
+                    </group>
+                    <notebook>
+                        <!-- General Information Tab -->
+                        <page string="General Information">
+                            <group>
+                                <field name="living_area"/>
+                                <field name="garden_area"/>
+                                <field name="total_area"/>
+                                <field name="description"/>
+                                <field name="bedrooms"/>
+                                <field name="facades"/>
+                                <field name="garage"/>
+                                <field name="garden"/>
+                                <field name="garden_orientation"/>
+                            </group>
+                        </page>
+                        <!-- Sales Information Tab -->
+                        <page string="Sales Information">
+                            <group>
+                                <field name="active"/>
+                            </group>
+                        </page>
+                        <page string="Offers">
+                            <!-- Definición de la vista tipo tree para mostrar las ofertas -->
+                            <field name="offer_ids">
+                                <tree editable="bottom">
+                                    <field name="price"  decoration-danger="status == 'refused'" decoration-success="status == 'accepted'"/>
+                                    <field name="partner_id"/>
+                                    <field name="validity"/>
+                                    <field name="date_deadline"/>
+                                    <button name="action_accept" type="object" icon="fa-check"/>
+                                    <button name="action_refuse" type="object" icon="fa-times"/>
+                                    <field name="status"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Other Information">
+                            <group>
+                                <field name="property_type_id"/>
+                                <field name="buyer"/>
+                                <field name="salesperson"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_estate_property_tree" model="ir.ui.view">
+        <field name="name">estate.property.tree</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <tree string="Estate Properties">
+                <field name="name"/>
+                <field name="expected_price"/>
+                <field name="selling_price"/>
+                <field name="bedrooms"/>
+                <field name="living_area"/>
+                <field name="garden"/>
+                <field name="garage"/>
+                <field name="postcode"/>
+                <field name="date_availability"/>
+                <field name="state"  
+                decoration-muted="state == 'sold'"
+                decoration-success="state in ['offer_received', 'offer_accepted']"
+                decoration-bf="state == 'offer_accepted'"/>
+                <field name="active"/>
+                <field name="property_type_id"/>
+                <field name="buyer"/>
+                <field name="salesperson"/>
+                <field name="tag_ids"/>
+            </tree>
+        </field>
+    </record>
+
+    !-- Definición de la Vista de Búsqueda (Search View) -->
+    <record id="view_estate_property_search" model="ir.ui.view">
+        <field name="name">estate.property.search</field>
+        <field name="model">estate.property</field>
+        <field name="arch" type="xml">
+            <search>
+                <!-- Filtros de Búsqueda -->
+                <filter string="Available Properties" name="filter_available" domain="[('state', 'in', ['New', 'Offer Received'])]"/>
+                <filter string="Active" name="filter_active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="filter_archived" domain="[('active', '=', False)]"/>
+                <filter name="filter_living_area" string="Living Area Greater Than"
+                        domain="[('living_area', '>=', context.get('living_area_min', 0))]"
+                        context="{'living_area_min': 50}"/> <!-- Default value for the filter -->
+
+                <!-- Campo de Búsqueda -->
+                <field name="name" string="Name"/>
+                <field name="postcode" string="Postcode"/>
+                <field name="date_availability" string="Date Availability"/>
+                <field name="expected_price" string="Expected Price"/>
+                <field name="selling_price" string="Selling Price"/>
+                <field name="bedrooms" string="Bedrooms"/>
+                <field name="living_area" string="Living Area"/>
+                <field name="state" string="State"/>
+                <field name="garden" string="Garden"/>
+                <field name="garage" string="Garage"/>
+                <field name="property_type_id" string="Property Type"/>
+                <field name="buyer" string="Buyer"/>
+                <field name="salesperson" string="Salesperson"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="test_model_action" model="ir.actions.act_window">
+        <field name="name">Estate property</field>
+        <field name="res_model">estate.property</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="view_estate_property_tree"/>
+        <field name="search_view_id" ref="view_estate_property_search"/>
+        <field name="context">{'default_filter': 'filter_available', 'living_area_min': 50}</field>
+    </record>
+
+    <record id="test_model_type_action" model="ir.actions.act_window">
+        <field name="name">Estate Property Types</field>
+        <field name="res_model">estate.property.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+</data></odoo>
